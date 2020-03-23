@@ -7,29 +7,35 @@ try:
 except:
     print('Error reading file')
     exit(1)
-INT1_CONTENTS = {}
+
+NAMES = INTS[0].iloc[7:,2]
+ROLL_NO = INTS[0].iloc[7:,1]
+# INT1_CONTENTS = {}
 # INT1_CONTENTS['NAMES'] = INT1.iloc[7:,2]
 # INT1_CONTENTS['T1-Q' + str(i)] = INT1.iloc[3:,2+i]
 # print(INT1)
 # print(INT1_CONTENTS['NAMES'])
-iter = 1
-for INT in INTS:
-    print('Finding COs from INT',iter)
-    iter+=1
-    NAMES = INT.iloc[7:,2]
-    ROLL_NO = INT.iloc[7:,1]
-    for i in range(1,20):
-        try:
-            COS[str(INT.iat[5,2+i])].append(INT.iloc[3:,2+i])
-            # print(INT.iat[5,2+i])
-            COS_count[INT.iat[5,2+i]] +=1
-        except:
-            break
-print('Done!')
-print('Number of CO1 questions found : ',COS_count['CO1'])
-print('Number of CO2 questions found : ',COS_count['CO2'])
-print('Number of CO3 questions found : ',COS_count['CO3'])
+def readInternals(INTS):
+    iter = 1
+    for INT in INTS:
+        print('Finding COs from INT',iter)
+        iter+=1
+        for i in range(1,1000):
+            try:
+                COS[str(INT.iat[5,2+i])].append(INT.iloc[3:,2+i])
+                # print(INT.iat[5,2+i])
+                COS_count[INT.iat[5,2+i]] +=1
+            except:
+                break
+    print('Done!')
+    print('Number of CO1 questions found : ',COS_count['CO1'])
+    print('Number of CO2 questions found : ',COS_count['CO2'])
+    print('Number of CO3 questions found : ',COS_count['CO3'])
 
 # print(COS)
+def main():
+    readInternals(INTS)
 
 
+if( __name__ == "__main__"):
+    main()
