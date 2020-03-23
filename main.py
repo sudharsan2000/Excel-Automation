@@ -10,11 +10,20 @@ except:
     print('Error reading file')
     exit(1)
 
-NAMES = INTS[0].iloc[7:,2]
+NAMES = INTS[0].iloc[3:,2]
 ROLL_NO = INTS[0].iloc[7:,1]
 
 def readInternals():
     iter = 1
+    COS['CO1'].append(INTS[0].iloc[3:,1])
+    COS['CO1'].append(INTS[0].iloc[3:,2])
+
+    COS['CO2'].append(INTS[0].iloc[3:,1])
+    COS['CO2'].append(INTS[0].iloc[3:,2])
+
+    COS['CO3'].append(INTS[0].iloc[3:,1])
+    COS['CO3'].append(INTS[0].iloc[3:,2])
+
     for INT in INTS:
         print('Finding COs from INT',iter)
         iter+=1
@@ -34,7 +43,9 @@ def readInternals():
 # print(COS)
 def main():
     readInternals()
-    writeToFile(r"./OP.xlsx",COS)
+    # print(COS['CO1'])
+    writeToFile(r"./OP1.xlsx",COS)
+
     
 if( __name__ == "__main__"):
     main()
