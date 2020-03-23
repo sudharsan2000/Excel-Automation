@@ -1,4 +1,6 @@
 import pandas as pd
+from fileWrite import * 
+
 COS={'CO1':[],'CO2':[],'CO3':[]}
 COS_count={'CO1':0,'CO2':0,'CO3':0}
 try:
@@ -10,12 +12,8 @@ except:
 
 NAMES = INTS[0].iloc[7:,2]
 ROLL_NO = INTS[0].iloc[7:,1]
-# INT1_CONTENTS = {}
-# INT1_CONTENTS['NAMES'] = INT1.iloc[7:,2]
-# INT1_CONTENTS['T1-Q' + str(i)] = INT1.iloc[3:,2+i]
-# print(INT1)
-# print(INT1_CONTENTS['NAMES'])
-def readInternals(INTS):
+
+def readInternals():
     iter = 1
     for INT in INTS:
         print('Finding COs from INT',iter)
@@ -27,6 +25,7 @@ def readInternals(INTS):
                 COS_count[INT.iat[5,2+i]] +=1
             except:
                 break
+    
     print('Done!')
     print('Number of CO1 questions found : ',COS_count['CO1'])
     print('Number of CO2 questions found : ',COS_count['CO2'])
@@ -34,8 +33,8 @@ def readInternals(INTS):
 
 # print(COS)
 def main():
-    readInternals(INTS)
-
-
+    readInternals()
+    writeToFile(r"./OP.xlsx",COS)
+    
 if( __name__ == "__main__"):
     main()
