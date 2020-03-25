@@ -88,6 +88,14 @@ ENDSEM_NUM_GRADES = {'1':0,'2':0,'3':0}
 INT_AVERAGE_GRADE = []
 ENDSEM_AVERAGE_GRADE = []
 
+def truncate(f, n=2):
+    '''Truncates/pads a float f to n decimal places without rounding'''
+    s = '{}'.format(f)
+    if 'e' in s or 'E' in s:
+        return '{0:.{1}f}'.format(f, n)
+    i, p, d = s.partition('.')
+    return '.'.join([i, (d+'0'*n)[:n]])
+
 def computeGrades(x):
     ret =  []
     for p in x:
@@ -126,7 +134,7 @@ def main():
 
         ATTEMPTED = ~np.isnan(k)
         ATTEMPTED_SUM =np.sum(np.multiply(ATTEMPTED,l),axis=1)
-        PERCENTAGE = np.divide(SUM,ATTEMPTED_SUM) * 100
+        PERCENTAGE = (np.divide(SUM,ATTEMPTED_SUM) * 100).round(decimals=2)
         GRADES = computeGrades(PERCENTAGE)
 
         NUM_STUDENTS = np.size(GRADES)
@@ -151,13 +159,13 @@ def main():
 
         GRADE_LIST = list(GRADES)
         INT_NUM_GRADES['1'][1] = GRADE_LIST.count(1)
-        INT_NUM_GRADES['1'][3] = (GRADE_LIST.count(1)/NUM_STUDENTS) * 100 
+        INT_NUM_GRADES['1'][3] = truncate((GRADE_LIST.count(1)/NUM_STUDENTS) * 100) 
         
         INT_NUM_GRADES['2'][1] = GRADE_LIST.count(2)
-        INT_NUM_GRADES['2'][3] = (GRADE_LIST.count(2)/NUM_STUDENTS) * 100 
+        INT_NUM_GRADES['2'][3] = truncate((GRADE_LIST.count(2)/NUM_STUDENTS) * 100) 
 
         INT_NUM_GRADES['3'][1] = GRADE_LIST.count(3)
-        INT_NUM_GRADES['3'][3] = (GRADE_LIST.count(3)/NUM_STUDENTS) * 100 
+        INT_NUM_GRADES['3'][3] = truncate((GRADE_LIST.count(3)/NUM_STUDENTS) * 100) 
 
         INT_AVERAGE_GRADE[1] = np.mean(GRADE_LIST)
 
@@ -181,7 +189,7 @@ def main():
 
         ATTEMPTED = ~np.isnan(n)
         ATTEMPTED_SUM =np.sum(np.multiply(ATTEMPTED,m),axis=1)
-        PERCENTAGE = np.divide(SUM,ATTEMPTED_SUM) * 100
+        PERCENTAGE = (np.divide(SUM,ATTEMPTED_SUM) * 100).round(decimals = 2)
         GRADES = computeGrades(PERCENTAGE)
 
         SUM = np.append([np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan],SUM)
@@ -191,13 +199,13 @@ def main():
 
         GRADE_LIST = list(GRADES)
         ENDSEM_NUM_GRADES['1'][1] = GRADE_LIST.count(1)
-        ENDSEM_NUM_GRADES['1'][3] = (GRADE_LIST.count(1)/NUM_STUDENTS) * 100 
+        ENDSEM_NUM_GRADES['1'][3] = truncate((GRADE_LIST.count(1)/NUM_STUDENTS) * 100)
 
         ENDSEM_NUM_GRADES['2'][1] = GRADE_LIST.count(2)
-        ENDSEM_NUM_GRADES['2'][3] = (GRADE_LIST.count(2)/NUM_STUDENTS) * 100 
+        ENDSEM_NUM_GRADES['2'][3] = truncate((GRADE_LIST.count(2)/NUM_STUDENTS) * 100) 
 
         ENDSEM_NUM_GRADES['3'][1] = GRADE_LIST.count(3)
-        ENDSEM_NUM_GRADES['3'][3] = (GRADE_LIST.count(3)/NUM_STUDENTS) * 100 
+        ENDSEM_NUM_GRADES['3'][3] = truncate((GRADE_LIST.count(3)/NUM_STUDENTS) * 100)
 
         ENDSEM_AVERAGE_GRADE[1] = np.mean(GRADE_LIST)
 
