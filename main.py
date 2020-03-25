@@ -1,9 +1,11 @@
 import pandas as pd
 import numpy as np
 from fileWrite import * 
+import scipy.sparse as sparse
 
 COS={'CO1':[],'CO2':[],'CO3':[],'CO4':[],'CO5':[],'CO6':[]}
 COS_count={'CO1':0,'CO2':0,'CO3':0,'CO4':0,'CO5':0,'CO6':0}
+
 MARKS = []
 try:
     excel = pd.ExcelFile('CO-PO MOS U15AET502 -odd 2018-19-Micro.xlsx')
@@ -14,6 +16,10 @@ except:
 
 NAMES = INTS[0].iloc[3:,2]
 ROLL_NO = INTS[0].iloc[7:,1]
+
+def appendtoframe(obj,x):
+    write = (pd.DataFrame(x)).iloc[3:,0]
+    obj.append(write)
 
 def readInternals():
     iter = 1
@@ -61,19 +67,38 @@ MARKS_PER_QUESTION = []
 QUESTION_ATTEMPTED = []
 def main():
     global MARKS
+    global MARKS_PER_QUESTION
     readInternals()
     # print(COS['CO1'])
-    writeToFile(r"./Course Outcomes.xlsx",COS)
+    # writeToFile(r"./Course Outcomes.xlsx",COS)
     iter = 1
 
     for flag in COS:
         MARKS.append((pd.DataFrame(COS[flag]).to_numpy()[2:COS_count[flag] + 3,4:]).transpose() )
         MARKS_PER_QUESTION.append((pd.DataFrame(COS[flag]).to_numpy()[2:COS_count[flag] + 3,0]).transpose() )
+    # SUM = None
+    for l,k in zip(MARKS_PER_QUESTION,MARKS) :
+        l = np.array(l,dtype=float)
+        k = np.array(k,dtype=float)
+        SUM = np.nansum(k,axis=1)
 
-    print(MARKS_PER_QUESTION)
-    print(np.nansum(MARKS[0],axis=1))
-    k = np.array(MARKS[0],dtype=float)
-    print(k.dtype)
-    print(np.count_nonzero(~np.isnan(k[0])))
+        ATTEMPTED = ~np.isnan(k)
+        ATTEMPTED_SUM =np.sum(np.multiply(ATTEMPTED,l),axis=1)
+        PERCENTAGE = np.divide(SUM,ATTEMPTED_SUM) * 100
+
+        SUM = np.append([np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan],SUM)
+        ATTEMPTED_SUM = np.append([np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan],ATTEMPTED_SUM)
+        PERCENTAGE = np.append([np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan],PERCENTAGE)
+        appendtoframe(COS['CO' + str(iter)], SUM)
+        appendtoframe(COS['CO' + str(iter)], ATTEMPTED_SUM)
+        appendtoframe(COS['CO' + str(iter)], PERCENTAGE)
+        print(COS['CO' + str(iter)])
+        iter+=1
+        # print(PERCENTAGE)
+
+    writeToFile(r"./Course Outcomes.xlsx",COS)
+
+
+
 if( __name__ == "__main__"):
     main()
