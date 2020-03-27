@@ -3,8 +3,8 @@ import numpy as np
 from fileWrite import *
 
 # array['CO1'][0] = 8
-COS = {'CO1': [], 'CO2': [], 'CO3': [], 'CO4': [],
-       'CO5': [], 'CO6': [], 'CO Summary': []}
+COS = {'CO Summary': [],'CO1': [], 'CO2': [], 'CO3': [], 'CO4': [],
+       'CO5': [], 'CO6': [], }
 CO_SUMMARY = [[None for f in range(100)] for x in range(100)]
 
 INT_COS_count = {'CO1': 0, 'CO2': 0, 'CO3': 0, 'CO4': 0, 'CO5': 0, 'CO6': 0}
