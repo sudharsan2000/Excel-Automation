@@ -3,7 +3,10 @@ import numpy as np
 from fileWrite import *
 
 # array['CO1'][0] = 8
-COS = {'CO1': [], 'CO2': [], 'CO3': [], 'CO4': [], 'CO5': [], 'CO6': []}
+COS = {'CO1': [], 'CO2': [], 'CO3': [], 'CO4': [],
+       'CO5': [], 'CO6': [], 'CO Summary': []}
+CO_SUMMARY = [ [ None for f in range(100)] for x in range( 100) ]
+
 INT_COS_count = {'CO1': 0, 'CO2': 0, 'CO3': 0, 'CO4': 0, 'CO5': 0, 'CO6': 0}
 ENDSEM_COS_count = {'CO1': 0, 'CO2': 0, 'CO3': 0, 'CO4': 0, 'CO5': 0, 'CO6': 0}
 GRADE_RANGES = [60, 50, 40]
@@ -22,6 +25,16 @@ ROLL_NO = INTS[0].iloc[3:, 1]
 
 # User defined function
 
+def initSummary():
+    startRow = 3
+    startColumn = 3 
+    iter = 1
+    for key in COS:
+        if(key != 'CO Summary'):
+            CO_SUMMARY[startColumn + 4 ][startRow + (iter -1 ) * 7] = 'CO' + str(iter)
+            CO_SUMMARY[startColumn - 1 ][startRow + 2 + (iter -1 ) * 7] = 'Number of students'
+            CO_SUMMARY[startColumn - 1 ][startRow + 4 + (iter -1 ) * 7] = 'Percentage'
+            iter += 1 
 
 def appendtoframe(obj, x, series=0):
 
@@ -115,6 +128,8 @@ def computeGrades(x):
             ret.append(1)
     return ret
 
+def addToSummary(a,b,c):
+    pass
 
 def main():
     global INT_MARKS
@@ -125,19 +140,21 @@ def main():
     global ENDSEM_NUM_GRADES
     global NUM_STUDENTS
     readInternals()
+    initSummary()
     # print(COS['CO1'])
     # writeToFile(r"./Course Outcomes.xlsx",COS)
     iter = 1
 
     for flag in COS:
-        INT_MARKS.append((pd.DataFrame(COS[flag]).to_numpy()[
-                         2:INT_COS_count[flag] + 3, 4:]).transpose())
-        INT_MARKS_PER_QUESTION.append((pd.DataFrame(COS[flag]).to_numpy()[
-                                      2:INT_COS_count[flag] + 3, 0]).transpose())
-        ENDSEM_MARKS.append((pd.DataFrame(COS[flag]).to_numpy()[
-                            INT_COS_count[flag] + 2:INT_COS_count[flag] + ENDSEM_COS_count[flag] + 4, 4:]).transpose())
-        ENDSEM_MARKS_PER_QUESTION.append((pd.DataFrame(COS[flag]).to_numpy(
-        )[INT_COS_count[flag] + 2:INT_COS_count[flag] + ENDSEM_COS_count[flag] + 4, 0]).transpose())
+        if(flag != 'CO Summary'):
+            INT_MARKS.append((pd.DataFrame(COS[flag]).to_numpy()[
+                2:INT_COS_count[flag] + 3, 4:]).transpose())
+            INT_MARKS_PER_QUESTION.append((pd.DataFrame(COS[flag]).to_numpy()[
+                2:INT_COS_count[flag] + 3, 0]).transpose())
+            ENDSEM_MARKS.append((pd.DataFrame(COS[flag]).to_numpy()[
+                                INT_COS_count[flag] + 2:INT_COS_count[flag] + ENDSEM_COS_count[flag] + 4, 4:]).transpose())
+            ENDSEM_MARKS_PER_QUESTION.append((pd.DataFrame(COS[flag]).to_numpy(
+            )[INT_COS_count[flag] + 2:INT_COS_count[flag] + ENDSEM_COS_count[flag] + 4, 0]).transpose())
 
     for l, k, m, n in zip(INT_MARKS_PER_QUESTION, INT_MARKS, ENDSEM_MARKS_PER_QUESTION, ENDSEM_MARKS):
         # INT
@@ -257,60 +274,73 @@ def main():
         appendtoframe(COS['CO' + str(iter)], EMPTY)
 
         appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['3'])
+        addToSummary(iter,'int','3')
         appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['2'])
+        addToSummary(iter,'int','2')
         appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['1'])
+        addToSummary(iter,'int','1')
         appendtoframe(COS['CO' + str(iter)], INT_AVERAGE_GRADE)
+        addToSummary(iter,'int','avg')
 
         appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['3'])
+        addToSummary(iter,'end','3')
         appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['2'])
+        addToSummary(iter,'end','2')
         appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['1'])
+        addToSummary(iter,'end','1')
         appendtoframe(COS['CO' + str(iter)], ENDSEM_AVERAGE_GRADE)
+        addToSummary(iter,'end','avg')
 
         iter += 1
         # print(COS['CO' + str(iter)])
         # print(PERCENTAGE)
 
     for key in COS:
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                 2][6] = 'INT Total obtained'
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                 3][6] = 'INT Total Attempted'
-        COS[key][INT_COS_count[key] +
-                 ENDSEM_COS_count[key] + 4][6] = 'INT Percentage'
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                 5][6] = 'INT Grades on\nscale of 3'
+        if(key != 'CO Summary'):
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
+                     2][6] = 'INT Total obtained'
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
+                     3][6] = 'INT Total Attempted'
+            COS[key][INT_COS_count[key] +
+                     ENDSEM_COS_count[key] + 4][6] = 'INT Percentage'
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
+                     5][6] = 'INT Grades on\nscale of 3'
 
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] + 6][6] = 'END obtained'
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] + 7][6] = 'END Attempted'
-        COS[key][INT_COS_count[key] +
-                 ENDSEM_COS_count[key] + 8][6] = 'END Percentage'
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                 9][6] = 'END Grades on\nscale of 3'
+            COS[key][INT_COS_count[key] +
+                     ENDSEM_COS_count[key] + 6][6] = 'END obtained'
+            COS[key][INT_COS_count[key] +
+                     ENDSEM_COS_count[key] + 7][6] = 'END Attempted'
+            COS[key][INT_COS_count[key] +
+                     ENDSEM_COS_count[key] + 8][6] = 'END Percentage'
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
+                     9][6] = 'END Grades on\nscale of 3'
 
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] + 12][8] = 'Number:'
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] + 12][10] = 'Percentage:'
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                 15][14] = 'Number of Students:'
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] + 16][14] = NUM_STUDENTS
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] + 12][8] = 'Number:'
+            COS[key][INT_COS_count[key] +
+                     ENDSEM_COS_count[key] + 12][10] = 'Percentage:'
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
+                     15][14] = 'Number of Students:'
+            COS[key][INT_COS_count[key] +
+                     ENDSEM_COS_count[key] + 16][14] = NUM_STUDENTS
 
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                 13][6] = 'Total INT\nGrade 3'
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                 14][6] = 'Total INT\nGrade 2'
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                 15][6] = 'Total INT\nGrade 1'
-        COS[key][INT_COS_count[key] +
-                 ENDSEM_COS_count[key] + 16][6] = 'INT\n Avg Grade'
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
+                     13][6] = 'Total INT\nGrade 3'
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
+                     14][6] = 'Total INT\nGrade 2'
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
+                     15][6] = 'Total INT\nGrade 1'
+            COS[key][INT_COS_count[key] +
+                     ENDSEM_COS_count[key] + 16][6] = 'INT\n Avg Grade'
 
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                 17][6] = 'Total END\nGrade 3'
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                 18][6] = 'Total END\nGrade 2'
-        COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                 19][6] = 'Total END\nGrade 1'
-        COS[key][INT_COS_count[key] +
-                 ENDSEM_COS_count[key] + 20][6] = 'END\n Avg Grade'
-
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
+                     17][6] = 'Total END\nGrade 3'
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
+                     18][6] = 'Total END\nGrade 2'
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
+                     19][6] = 'Total END\nGrade 1'
+            COS[key][INT_COS_count[key] +
+                     ENDSEM_COS_count[key] + 20][6] = 'END\n Avg Grade'
+    COS['CO Summary'] = CO_SUMMARY
     writeToFile(r"./Course Outcomes.xlsx", COS)
 
 
