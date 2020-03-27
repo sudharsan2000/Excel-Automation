@@ -1,6 +1,10 @@
 import pandas as pd
 import numpy as np
 from fileWrite import *
+import ntpath
+import easygui
+import os
+
 
 # array['CO1'][0] = 8
 COS = {'CO Summary': [],'CO1': [], 'CO2': [], 'CO3': [], 'CO4': [],
@@ -10,18 +14,63 @@ CO_SUMMARY = [[None for f in range(100)] for x in range(100)]
 INT_COS_count = {'CO1': 0, 'CO2': 0, 'CO3': 0, 'CO4': 0, 'CO5': 0, 'CO6': 0}
 ENDSEM_COS_count = {'CO1': 0, 'CO2': 0, 'CO3': 0, 'CO4': 0, 'CO5': 0, 'CO6': 0}
 GRADE_RANGES = [60, 50, 40]
-try:
-    # Creating file pointer in the name of excel
-    excel = pd.ExcelFile('CO-PO MOS U15AET502 -odd 2018-19-Micro.xlsx')
-    # Array INTS holds the objects for all internals sheets of excelfile as its elements
-    INTS = [pd.read_excel(excel, 'INT1'), pd.read_excel(excel, 'INT2')]
-    ENDSEM = pd.read_excel(excel, 'End Sem')
-except:
-    print('Error reading file')
-    exit(1)
+INTS = []
+ENDSEM = None
 
-NAMES = INTS[0].iloc[3:, 2]  # TODO
-ROLL_NO = INTS[0].iloc[3:, 1]
+NUM_STUDENTS = 0
+INT_MARKS = []
+ENDSEM_MARKS = []
+INT_MARKS_PER_QUESTION = []
+ENDSEM_MARKS_PER_QUESTION = []
+QUESTION_ATTEMPTED = []
+GRADES = []
+EMPTY = []
+INT_NUM_GRADES = {'1': 0, '2': 0, '3': 0}
+ENDSEM_NUM_GRADES = {'1': 0, '2': 0, '3': 0}
+
+INT_AVERAGE_GRADE = []
+ENDSEM_AVERAGE_GRADE = []
+
+def readFile(file):
+    global COS,CO_SUMMARY,INT_COS_count,ENDSEM_COS_count,GRADE_RANGES,INTS,ENDSEM,NUM_STUDENTS,INT_MARKS,ENDSEM_MARKS
+    global INT_MARKS_PER_QUESTION,ENDSEM_MARKS_PER_QUESTION,QUESTION_ATTEMPTED,GRADES,EMPTY,INT_NUM_GRADES,ENDSEM_NUM_GRADES
+    global INT_AVERAGE_GRADE
+    global ENDSEM_AVERAGE_GRADE
+    COS = {'CO Summary': [],'CO1': [], 'CO2': [], 'CO3': [], 'CO4': [],
+        'CO5': [], 'CO6': [], }
+    CO_SUMMARY = [[None for f in range(100)] for x in range(100)]
+
+    INT_COS_count = {'CO1': 0, 'CO2': 0, 'CO3': 0, 'CO4': 0, 'CO5': 0, 'CO6': 0}
+    ENDSEM_COS_count = {'CO1': 0, 'CO2': 0, 'CO3': 0, 'CO4': 0, 'CO5': 0, 'CO6': 0}
+    GRADE_RANGES = [60, 50, 40]
+    INTS = []
+    ENDSEM = None
+
+    NUM_STUDENTS = 0
+    INT_MARKS = []
+    ENDSEM_MARKS = []
+    INT_MARKS_PER_QUESTION = []
+    ENDSEM_MARKS_PER_QUESTION = []
+    QUESTION_ATTEMPTED = []
+    GRADES = []
+    EMPTY = []
+    INT_NUM_GRADES = {'1': 0, '2': 0, '3': 0}
+    ENDSEM_NUM_GRADES = {'1': 0, '2': 0, '3': 0}
+
+    INT_AVERAGE_GRADE = []
+    ENDSEM_AVERAGE_GRADE = []
+    try:
+        print('Reading file: ',file)
+        # Creating file pointer in the name of excel
+        excel = pd.ExcelFile(file)
+        # Array INTS holds the objects for all internals sheets of excelfile as its elements
+        INTS = [pd.read_excel(excel, 'INT1'), pd.read_excel(excel, 'INT2')]
+        ENDSEM = pd.read_excel(excel, 'End Sem')
+        NAMES = INTS[0].iloc[3:, 2]  # TODO
+        ROLL_NO = INTS[0].iloc[3:, 1]
+    except:
+        print('Error reading file : ',ntpath.basename(file))
+
 
 # User defined function
 
@@ -72,6 +121,7 @@ def appendtoframe(obj, x, series=0):
 
 
 def readInternals():
+
     iter = 1
     COS['CO1'].append(INTS[0].iloc[3:, 1])
     COS['CO1'].append(INTS[0].iloc[3:, 2])
@@ -114,19 +164,7 @@ def readInternals():
 
 
 # print(COS)
-NUM_STUDENTS = 0
-INT_MARKS = []
-ENDSEM_MARKS = []
-INT_MARKS_PER_QUESTION = []
-ENDSEM_MARKS_PER_QUESTION = []
-QUESTION_ATTEMPTED = []
-GRADES = []
-EMPTY = []
-INT_NUM_GRADES = {'1': 0, '2': 0, '3': 0}
-ENDSEM_NUM_GRADES = {'1': 0, '2': 0, '3': 0}
 
-INT_AVERAGE_GRADE = []
-ENDSEM_AVERAGE_GRADE = []
 
 
 def truncate(f, n=2):
@@ -162,7 +200,7 @@ def addToSummary(entry, iter, t, g,type='num'):
                                         type_offset + (iter - 1) * 7] = entry
 
 
-def main():
+def main(OP_FILE):
     global INT_MARKS
     global ENDSEM_MARKS
     global INT_MARKS_PER_QUESTION
@@ -424,8 +462,13 @@ def main():
                      ENDSEM_COS_count[key] + 20][6] = 'END\n Avg Grade'
     CO_SUMMARY[7][1] = NUM_STUDENTS
     COS['CO Summary'] = CO_SUMMARY
-    writeToFile(r"./Course Outcomes.xlsx", COS)
+    writeToFile(OP_FILE, COS)
+
 
 
 if(__name__ == "__main__"):
-    main()
+    files = easygui.fileopenbox("Excel writer", "Choose excel files to process", filetypes= ['*',"*.xlsx"], multiple=True)
+    for file in files:
+        readFile(file)
+        OP_FILE = os.path.join(ntpath.split(file)[0],'Summary ' + ntpath.basename(file))
+        main(OP_FILE)
