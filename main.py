@@ -110,12 +110,7 @@ def readInternals():
             break
 
     print('Done!')
-    print('Number of CO1 questions found : ', INT_COS_count['CO1'])
-    print('Number of CO2 questions found : ', INT_COS_count['CO2'])
-    print('Number of CO3 questions found : ', INT_COS_count['CO3'])
-    print('Number of CO3 questions found : ', INT_COS_count['CO4'])
-    print('Number of CO3 questions found : ', INT_COS_count['CO5'])
-    print('Number of CO3 questions found : ', INT_COS_count['CO6'])
+    
 
 
 # print(COS)
@@ -379,9 +374,11 @@ def main():
         iter += 1
         # print(COS['CO' + str(iter)])
         # print(PERCENTAGE)
-
+    print('Number of questions: ')
     for key in COS:
         if(key != 'CO Summary'):
+            print('\t    ',key)
+            print('Internals: %d\tEnd Semester: %d '%(INT_COS_count[key],ENDSEM_COS_count[key]))
             COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
                      2][6] = 'INT Total obtained'
             COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
