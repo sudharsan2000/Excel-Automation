@@ -5,7 +5,7 @@ from fileWrite import *
 # array['CO1'][0] = 8
 COS = {'CO1': [], 'CO2': [], 'CO3': [], 'CO4': [],
        'CO5': [], 'CO6': [], 'CO Summary': []}
-CO_SUMMARY = [ [ None for f in range(100)] for x in range( 100) ]
+CO_SUMMARY = [[None for f in range(100)] for x in range(100)]
 
 INT_COS_count = {'CO1': 0, 'CO2': 0, 'CO3': 0, 'CO4': 0, 'CO5': 0, 'CO6': 0}
 ENDSEM_COS_count = {'CO1': 0, 'CO2': 0, 'CO3': 0, 'CO4': 0, 'CO5': 0, 'CO6': 0}
@@ -25,16 +25,42 @@ ROLL_NO = INTS[0].iloc[3:, 1]
 
 # User defined function
 
+
 def initSummary():
     startRow = 3
-    startColumn = 3 
+    startColumn = 3
     iter = 1
+    CO_SUMMARY[startColumn + 3][startRow - 2 +
+                                        (iter - 1) * 7] =  'No of\nStudents'
     for key in COS:
         if(key != 'CO Summary'):
-            CO_SUMMARY[startColumn + 4 ][startRow + (iter -1 ) * 7] = 'CO' + str(iter)
-            CO_SUMMARY[startColumn - 1 ][startRow + 2 + (iter -1 ) * 7] = 'Number of students'
-            CO_SUMMARY[startColumn - 1 ][startRow + 4 + (iter -1 ) * 7] = 'Percentage'
-            iter += 1 
+            CO_SUMMARY[startColumn + 4][startRow +
+                                        (iter - 1) * 7] = 'CO' + str(iter)
+            CO_SUMMARY[startColumn - 1][startRow + 2 +
+                                        (iter - 1) * 7] = 'Number of students'
+            CO_SUMMARY[startColumn - 1][startRow +
+                                        4 + (iter - 1) * 7] = 'Percentage'
+
+            CO_SUMMARY[startColumn][startRow + 1 +
+                                    (iter - 1) * 7] = 'Total INT\nGrade 3'
+            CO_SUMMARY[startColumn + 1][startRow + 1 +
+                                        (iter - 1) * 7] = 'Total INT\nGrade 2'
+            CO_SUMMARY[startColumn + 2][startRow + 1 +
+                                        (iter - 1) * 7] = 'Total INT\nGrade 1'
+            CO_SUMMARY[startColumn + 3][startRow +
+                                        1 + (iter - 1) * 7] = 'INT Avg\nGrade'
+
+            CO_SUMMARY[startColumn + 5][startRow + 1 +
+                                        (iter - 1) * 7] = 'Total ES\nGrade 3'
+            CO_SUMMARY[startColumn + 6][startRow + 1 +
+                                        (iter - 1) * 7] = 'Total ES\nGrade 2'
+            CO_SUMMARY[startColumn + 7][startRow + 1 +
+                                        (iter - 1) * 7] = 'Total ES\nGrade 1'
+            CO_SUMMARY[startColumn + 8][startRow +
+                                        1 + (iter - 1) * 7] = 'ES Avg\nGrade'
+
+            iter += 1
+
 
 def appendtoframe(obj, x, series=0):
 
@@ -128,8 +154,18 @@ def computeGrades(x):
             ret.append(1)
     return ret
 
-def addToSummary(a,b,c):
-    pass
+
+def addToSummary(entry, iter, t, g,type='num'):
+    startRow = 3
+    startColumn = 3
+    TEST = {'int':0,'end':5}
+    GRD = {'3':0,'2':1,'1':2,'avg':3}
+    type_offset = 1
+    if (type == 'percentage'):
+        type_offset = 3
+    CO_SUMMARY[startColumn + TEST[t] + GRD[g]][startRow + 1 +
+                                        type_offset + (iter - 1) * 7] = entry
+
 
 def main():
     global INT_MARKS
@@ -215,13 +251,16 @@ def main():
 
         GRADES = np.append([np.nan, np.nan, np.nan, np.nan,
                             np.nan, np.nan, np.nan], GRADES)
-
-        appendtoframe(COS['CO' + str(iter)], SUM)
-        appendtoframe(COS['CO' + str(iter)], ATTEMPTED_SUM)
-        appendtoframe(COS['CO' + str(iter)], PERCENTAGE)
-        appendtoframe(COS['CO' + str(iter)], GRADES)
+        if(INT_COS_count['CO' + str(iter)] != 0):
+            appendtoframe(COS['CO' + str(iter)], SUM)
+            appendtoframe(COS['CO' + str(iter)], ATTEMPTED_SUM)
+            appendtoframe(COS['CO' + str(iter)], PERCENTAGE)
+            appendtoframe(COS['CO' + str(iter)], GRADES)
+        else:
+            for i in range(4):
+                appendtoframe(COS['CO' + str(iter)], EMPTY)
         # END SEM
-# 3
+        # if(ENDSEM_NUM_GRADES != )
         m = np.array(m, dtype=float)
         n = np.array(n, dtype=float)
         SUM = np.nansum(n, axis=1)
@@ -264,32 +303,78 @@ def main():
 
         GRADES = np.append([np.nan, np.nan, np.nan, np.nan,
                             np.nan, np.nan, np.nan], GRADES)
-        appendtoframe(COS['CO' + str(iter)], SUM)
-        appendtoframe(COS['CO' + str(iter)], ATTEMPTED_SUM)
-        appendtoframe(COS['CO' + str(iter)], PERCENTAGE)
-        appendtoframe(COS['CO' + str(iter)], GRADES)
+        if(ENDSEM_COS_count['CO' + str(iter)] != 0):
+            appendtoframe(COS['CO' + str(iter)], SUM)
+            appendtoframe(COS['CO' + str(iter)], ATTEMPTED_SUM)
+            appendtoframe(COS['CO' + str(iter)], PERCENTAGE)
+            appendtoframe(COS['CO' + str(iter)], GRADES)
+        else:
+            for i in range(4):
+                appendtoframe(COS['CO' + str(iter)], EMPTY)
 
         appendtoframe(COS['CO' + str(iter)], EMPTY)
         appendtoframe(COS['CO' + str(iter)], EMPTY)  # Spacing
         appendtoframe(COS['CO' + str(iter)], EMPTY)
 
-        appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['3'])
-        addToSummary(iter,'int','3')
-        appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['2'])
-        addToSummary(iter,'int','2')
-        appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['1'])
-        addToSummary(iter,'int','1')
-        appendtoframe(COS['CO' + str(iter)], INT_AVERAGE_GRADE)
-        addToSummary(iter,'int','avg')
+        if(INT_COS_count['CO' + str(iter)] != 0):
+            appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['3'])
+            addToSummary(INT_NUM_GRADES['3'][8],iter, 'int', '3')
+            addToSummary(INT_NUM_GRADES['3'][10],iter, 'int', '3','percentage')
 
-        appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['3'])
-        addToSummary(iter,'end','3')
-        appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['2'])
-        addToSummary(iter,'end','2')
-        appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['1'])
-        addToSummary(iter,'end','1')
-        appendtoframe(COS['CO' + str(iter)], ENDSEM_AVERAGE_GRADE)
-        addToSummary(iter,'end','avg')
+            appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['2'])
+            addToSummary(INT_NUM_GRADES['2'][8],iter, 'int', '2')
+            addToSummary(INT_NUM_GRADES['2'][10],iter, 'int', '2','percentage')
+
+            appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['1'])
+            addToSummary(INT_NUM_GRADES['1'][8],iter, 'int', '1')
+            addToSummary(INT_NUM_GRADES['1'][10],iter, 'int', '1','percentage')
+
+            appendtoframe(COS['CO' + str(iter)], INT_AVERAGE_GRADE)
+            addToSummary(INT_AVERAGE_GRADE[8],iter, 'int', 'avg')
+            addToSummary(INT_AVERAGE_GRADE[8],iter, 'int', 'avg','percentage')
+        else:
+            addToSummary('NA',iter, 'int', '3')
+            addToSummary('NA',iter, 'int', '3','percentage')
+            addToSummary('NA',iter, 'int', '2')
+            addToSummary('NA',iter, 'int', '2','percentage')
+            addToSummary('NA',iter, 'int', '1')
+            addToSummary('NA',iter, 'int', '1','percentage')
+            addToSummary('NA',iter, 'int', 'avg')
+            addToSummary('NA',iter, 'int', 'avg','percentage')
+            
+            for i in range(4):
+                appendtoframe(COS['CO' + str(iter)], EMPTY)
+
+
+        if(ENDSEM_COS_count['CO' + str(iter)] != 0):
+            appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['3'])
+            addToSummary(ENDSEM_NUM_GRADES['3'][8],iter, 'end', '3')
+            addToSummary(ENDSEM_NUM_GRADES['3'][10],iter, 'end', '3','percentage')
+
+            appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['2'])
+            addToSummary(ENDSEM_NUM_GRADES['2'][8],iter, 'end', '2')
+            addToSummary(ENDSEM_NUM_GRADES['2'][10],iter, 'end', '2','percentage')
+
+            appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['1'])
+            addToSummary(ENDSEM_NUM_GRADES['1'][8],iter, 'end', '1')
+            addToSummary(ENDSEM_NUM_GRADES['1'][10],iter, 'end', '1','percentage')
+
+            appendtoframe(COS['CO' + str(iter)], ENDSEM_AVERAGE_GRADE)
+            addToSummary(ENDSEM_AVERAGE_GRADE[8],iter, 'end', 'avg')
+            addToSummary(ENDSEM_AVERAGE_GRADE[10],iter, 'end', 'avg','percentage')
+        else:
+            addToSummary('NA',iter, 'end', '3')
+            addToSummary('NA',iter, 'end', '3','percentage')
+            addToSummary('NA',iter, 'end', '2')
+            addToSummary('NA',iter, 'end', '2','percentage')
+            addToSummary('NA',iter, 'end', '1')
+            addToSummary('NA',iter, 'end', '1','percentage')
+            addToSummary('NA',iter, 'end', 'avg')
+            addToSummary('NA',iter, 'end', 'avg','percentage')
+            
+            for i in range(4):
+                appendtoframe(COS['CO' + str(iter)], EMPTY)
+
 
         iter += 1
         # print(COS['CO' + str(iter)])
@@ -340,6 +425,7 @@ def main():
                      19][6] = 'Total END\nGrade 1'
             COS[key][INT_COS_count[key] +
                      ENDSEM_COS_count[key] + 20][6] = 'END\n Avg Grade'
+    CO_SUMMARY[7][1] = NUM_STUDENTS
     COS['CO Summary'] = CO_SUMMARY
     writeToFile(r"./Course Outcomes.xlsx", COS)
 
