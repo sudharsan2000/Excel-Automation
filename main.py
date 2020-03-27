@@ -4,6 +4,8 @@ from fileWrite import *
 import ntpath
 import easygui
 import os
+import warnings
+warnings.filterwarnings("ignore")
 
 
 # array['CO1'][0] = 8
