@@ -81,7 +81,7 @@ def initSummary():
     startColumn = 3
     iter = 1
     CO_SUMMARY[startColumn + 3][startRow - 2 +
-                                        (iter - 1) * 7] =  'No of\nStudents'
+                                        (iter - 1) * 7] =  'Total Students'
     for key in COS:
         if(key != 'CO Summary'):
             CO_SUMMARY[startColumn + 4][startRow +
@@ -92,22 +92,22 @@ def initSummary():
                                         4 + (iter - 1) * 7] = 'Percentage'
 
             CO_SUMMARY[startColumn][startRow + 1 +
-                                    (iter - 1) * 7] = 'Total INT\nGrade 3'
+                                    (iter - 1) * 7] = 'INT Grade 3'
             CO_SUMMARY[startColumn + 1][startRow + 1 +
-                                        (iter - 1) * 7] = 'Total INT\nGrade 2'
+                                        (iter - 1) * 7] = 'INT Grade 2'
             CO_SUMMARY[startColumn + 2][startRow + 1 +
-                                        (iter - 1) * 7] = 'Total INT\nGrade 1'
+                                        (iter - 1) * 7] = 'INT Grade 1'
             CO_SUMMARY[startColumn + 3][startRow +
-                                        1 + (iter - 1) * 7] = 'INT Avg\nGrade'
+                                        1 + (iter - 1) * 7] = 'INT Avg Grade'
 
             CO_SUMMARY[startColumn + 5][startRow + 1 +
-                                        (iter - 1) * 7] = 'Total ES\nGrade 3'
+                                        (iter - 1) * 7] = 'ES Grade 3'
             CO_SUMMARY[startColumn + 6][startRow + 1 +
-                                        (iter - 1) * 7] = 'Total ES\nGrade 2'
+                                        (iter - 1) * 7] = 'ES Grade 2'
             CO_SUMMARY[startColumn + 7][startRow + 1 +
-                                        (iter - 1) * 7] = 'Total ES\nGrade 1'
+                                        (iter - 1) * 7] = 'ES Grade 1'
             CO_SUMMARY[startColumn + 8][startRow +
-                                        1 + (iter - 1) * 7] = 'ES Avg\nGrade'
+                                        1 + (iter - 1) * 7] = 'ES Avg Grade'
 
             iter += 1
 
@@ -468,11 +468,13 @@ def main(OP_FILE):
 
 
 if(__name__ == "__main__"):
-    files = easygui.fileopenbox("Excel writer", "Choose excel files to process", filetypes= ['*',"*.xlsx"], multiple=True) 
+    files = easygui.fileopenbox("Excel writer", "Choose excel files to process", filetypes= ["*.xlsx",'*'], multiple=True) 
     string = 'Do you want to CONTINUE with same grade ranges?\n\n\nCurrent Ranges are:\n\n Grade 3 Minimum Percentage : ' + str(GRADE_RANGES[0]) + '\n Grade 2 Minimum Percentage : ' + str(GRADE_RANGES[1]) #+' \n Grade 1 Minimum Percentage : ' + str(GRADE_RANGES[2])
     while(not easygui.ynbox(string,title='Continue with same grade ranges?')):
-        GRADE_RANGES[0] = easygui.integerbox(title='Enter Min Percentage for Grade 3')
-        GRADE_RANGES[1] = easygui.integerbox(title='Enter Min Percentage for Grade 2',upperbound=GRADE_RANGES[0])
+        temp =  easygui.integerbox(title='Enter Min Percentage for Grade 3',default=GRADE_RANGES[0])
+        GRADE_RANGES[0] = temp if temp != None else GRADE_RANGES[0]
+        temp = easygui.integerbox(title='Enter Min Percentage for Grade 2',upperbound=GRADE_RANGES[0],default=GRADE_RANGES[1])
+        GRADE_RANGES[1] = temp if temp != None else GRADE_RANGES[1]
         # GRADE_RANGES[2] = easygui.integerbox(title='Enter Min Percentage for Grade 1',upperbound=GRADE_RANGES[1])
 
         string = 'Do you want to CONTINUE with same grade ranges?\n\n\nCurrent Ranges are:\n\n Grade 3 Minimum Marks : ' + str(GRADE_RANGES[0]) + '\n Grade 2 Minimum Marks : ' + str(GRADE_RANGES[1]) #+' \n Grade 1 Minimum Marks : ' + str(GRADE_RANGES[2])
