@@ -11,5 +11,5 @@ def writeToFile(path,obj,trans=1):
         else:
             k = obj[key]
         write = pd.DataFrame(k)
-        write.to_excel(writer,key)
+        write.to_excel(writer,key,header=False,index=False)
     writer.save()
