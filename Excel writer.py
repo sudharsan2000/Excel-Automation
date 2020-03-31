@@ -5,6 +5,7 @@ import ntpath
 import easygui
 import os
 import warnings
+# import time
 warnings.filterwarnings("ignore")
 
 
@@ -69,6 +70,7 @@ def readFile(file):
         ENDSEM = pd.read_excel(excel, 'End Sem')
         NAMES = INTS[0].iloc[3:, 2]  # TODO
         ROLL_NO = INTS[0].iloc[3:, 1]
+        excel.close()
     except:
         print('Error reading file : ',ntpath.basename(file))
 
@@ -355,19 +357,19 @@ def main(OP_FILE):
         appendtoframe(COS['CO' + str(iter)], EMPTY)
 
         if(INT_COS_count['CO' + str(iter)] != 0):
-            appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['3'])
+            # appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['3'])
             addToSummary(INT_NUM_GRADES['3'][8],iter, 'int', '3')
             addToSummary(INT_NUM_GRADES['3'][10],iter, 'int', '3','percentage')
 
-            appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['2'])
+            # appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['2'])
             addToSummary(INT_NUM_GRADES['2'][8],iter, 'int', '2')
             addToSummary(INT_NUM_GRADES['2'][10],iter, 'int', '2','percentage')
 
-            appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['1'])
+            # appendtoframe(COS['CO' + str(iter)], INT_NUM_GRADES['1'])
             addToSummary(INT_NUM_GRADES['1'][8],iter, 'int', '1')
             addToSummary(INT_NUM_GRADES['1'][10],iter, 'int', '1','percentage')
 
-            appendtoframe(COS['CO' + str(iter)], INT_AVERAGE_GRADE)
+            # appendtoframe(COS['CO' + str(iter)], INT_AVERAGE_GRADE)
             addToSummary(INT_AVERAGE_GRADE[8],iter, 'int', 'avg')
         else:
             addToSummary('NA',iter, 'int', '3')
@@ -383,19 +385,19 @@ def main(OP_FILE):
 
 
         if(ENDSEM_COS_count['CO' + str(iter)] != 0):    
-            appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['3'])
+            # appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['3'])
             addToSummary(ENDSEM_NUM_GRADES['3'][8],iter, 'end', '3')
             addToSummary(ENDSEM_NUM_GRADES['3'][10],iter, 'end', '3','percentage')
 
-            appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['2'])
+            # appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['2'])
             addToSummary(ENDSEM_NUM_GRADES['2'][8],iter, 'end', '2')
             addToSummary(ENDSEM_NUM_GRADES['2'][10],iter, 'end', '2','percentage')
 
-            appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['1'])
+            # appendtoframe(COS['CO' + str(iter)], ENDSEM_NUM_GRADES['1'])
             addToSummary(ENDSEM_NUM_GRADES['1'][8],iter, 'end', '1')
             addToSummary(ENDSEM_NUM_GRADES['1'][10],iter, 'end', '1','percentage')
 
-            appendtoframe(COS['CO' + str(iter)], ENDSEM_AVERAGE_GRADE)
+            # appendtoframe(COS['CO' + str(iter)], ENDSEM_AVERAGE_GRADE)
             addToSummary(ENDSEM_AVERAGE_GRADE[8],iter, 'end', 'avg')
         else:
             addToSummary('NA',iter, 'end', '3')
@@ -419,48 +421,29 @@ def main(OP_FILE):
             print('\t    ',key)
             print('Internals: %d\tEnd Semester: %d '%(INT_COS_count[key],ENDSEM_COS_count[key]))
             COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                     2][6] = 'INT Total obtained'
+                     2][5] = 'CUMULATIVE'
             COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                     3][6] = 'INT Total Attempted'
+                     2][6] = 'Obtained'
+            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
+                     3][6] = 'Attempted'
             COS[key][INT_COS_count[key] +
-                     ENDSEM_COS_count[key] + 4][6] = 'INT Percentage'
+                     ENDSEM_COS_count[key] + 4][6] = 'Percentage'
             COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                     5][6] = 'INT Grades on\nscale of 3'
+                     5][6] = 'Grades'
+
 
             COS[key][INT_COS_count[key] +
-                     ENDSEM_COS_count[key] + 6][6] = 'END obtained'
+                     ENDSEM_COS_count[key] + 6][5] = 'END SEMESTER'
             COS[key][INT_COS_count[key] +
-                     ENDSEM_COS_count[key] + 7][6] = 'END Attempted'
+                     ENDSEM_COS_count[key] + 6][6] = 'Obtained'
             COS[key][INT_COS_count[key] +
-                     ENDSEM_COS_count[key] + 8][6] = 'END Percentage'
+                     ENDSEM_COS_count[key] + 7][6] = 'Attempted'
+            COS[key][INT_COS_count[key] +
+                     ENDSEM_COS_count[key] + 8][6] = 'Percentage'
             COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                     9][6] = 'END Grades on\nscale of 3'
+                     9][6] = 'Grades'
 
-            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] + 12][8] = 'Number:'
-            COS[key][INT_COS_count[key] +
-                     ENDSEM_COS_count[key] + 12][10] = 'Percentage:'
-            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                     15][14] = 'Number of Students:'
-            COS[key][INT_COS_count[key] +
-                     ENDSEM_COS_count[key] + 16][14] = NUM_STUDENTS
-
-            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                     13][6] = 'Total INT\nGrade 3'
-            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                     14][6] = 'Total INT\nGrade 2'
-            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                     15][6] = 'Total INT\nGrade 1'
-            COS[key][INT_COS_count[key] +
-                     ENDSEM_COS_count[key] + 16][6] = 'INT\n Avg Grade'
-
-            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                     17][6] = 'Total END\nGrade 3'
-            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                     18][6] = 'Total END\nGrade 2'
-            COS[key][INT_COS_count[key] + ENDSEM_COS_count[key] +
-                     19][6] = 'Total END\nGrade 1'
-            COS[key][INT_COS_count[key] +
-                     ENDSEM_COS_count[key] + 20][6] = 'END\n Avg Grade'
+            
     CO_SUMMARY[8][0] = NUM_STUDENTS
     COS['CO Summary'] = CO_SUMMARY
     writeToFile(OP_FILE, COS)
@@ -481,10 +464,13 @@ if(__name__ == "__main__"):
 
     for file in files:
         readFile(file)
-        OP_FILE = os.path.join(ntpath.split(file)[0],'Summary ' + ntpath.basename(file))
+        # OP_FILE = os.path.join(ntpath.split(file)[0],'Summary ' + ntpath.basename(file))
+        OP_FILE = file
 
         try:
+            # tick = time.time()
             main(OP_FILE)
+            # print(time.time() - tick)
         except:
             print('Please check contents of file : ',ntpath.basename(file))
             print('Or close the Output excel files.')
